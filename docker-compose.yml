@@ -1,0 +1,40 @@
+services:
+  teaspeak1:
+    build: .
+    restart: always 
+    environment:
+      - VOICE_PORT=9987
+      - QUERY_PORT=10101
+      - FILE_PORT=30303
+    ports:
+      - "9987:9987/udp"
+      - "10101:10101"
+      - "30303:30303"
+    volumes:
+      - teaspeak1_data:/teaspeak/data
+      - teaspeak1_logs:/teaspeak/logs
+
+  teaspeak2:
+    build: .
+    restart: always 
+    environment:
+      - VOICE_PORT=9988
+      - QUERY_PORT=10102
+      - FILE_PORT=30304
+    ports:
+      - "9988:9987/udp"
+      - "10102:10101"
+      - "30304:30303"
+    volumes:
+      - teaspeak2_data:/teaspeak/data
+      - teaspeak2_logs:/teaspeak/logs
+
+volumes:
+  teaspeak1_data:
+    driver: local
+  teaspeak1_logs:
+    driver: local
+  teaspeak2_data:
+    driver: local
+  teaspeak2_logs:
+    driver: local
