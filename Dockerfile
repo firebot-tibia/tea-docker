@@ -8,9 +8,9 @@ RUN useradd -r -U -m -d /teaspeak teaspeak
 
 WORKDIR /teaspeak
 
-RUN wget https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-1.4.22.tar.gz \
-    && tar -xzf TeaSpeak-1.4.22.tar.gz \
-    && rm TeaSpeak-1.4.22.tar.gz \
+RUN wget https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-1.5.6.tar.gz \
+    && tar -xzf TeaSpeak-1.5.6.tar.gz \
+    && rm TeaSpeak-1.5.6.tar.gz \
     && chown -R teaspeak:teaspeak /teaspeak
 
 USER teaspeak

@@ -11,8 +11,9 @@ services:
       - "10101:10101"
       - "30303:30303"
     volumes:
-      - teaspeak1_data:/teaspeak/data
-      - teaspeak1_logs:/teaspeak/logs
+      - ./persistence/teaspeak1/data:/teaspeak/data
+      - ./persistence/teaspeak1/config:/teaspeak/config
+      - ./persistence/teaspeak1/logs:/teaspeak/logs
 
   teaspeak2:
     build: .
@@ -26,15 +27,6 @@ services:
       - "10102:10101"
       - "30304:30303"
     volumes:
-      - teaspeak2_data:/teaspeak/data
-      - teaspeak2_logs:/teaspeak/logs
-
-volumes:
-  teaspeak1_data:
-    driver: local
-  teaspeak1_logs:
-    driver: local
-  teaspeak2_data:
-    driver: local
-  teaspeak2_logs:
-    driver: local
+      - ./persistence/teaspeak2/data:/teaspeak/data
+      - ./persistence/teaspeak2/config:/teaspeak/config
+      - ./persistence/teaspeak2/logs:/teaspeak/logs
