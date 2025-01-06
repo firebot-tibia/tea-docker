@@ -20,32 +20,34 @@ WORKDIR /teaspeak
 # Download and extract TeaSpeak
 RUN wget https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-1.4.22.tar.gz \
     && tar -xzf TeaSpeak-1.4.22.tar.gz \
-    && rm TeaSpeak-1.4.22.tar.gz
+    && rm TeaSpeak-1.4.22.tar.gz \
+    && setcap "cap_net_bind_service=+ep" /teaspeak/TeaSpeakServer
 
-# Create necessary directories and set permissions in one layer
-RUN mkdir -p /teaspeak/logs && \
-    mkdir -p /teaspeak/files && \
-    mkdir -p /teaspeak/config && \
-    mkdir -p /teaspeak/data && \
-    mkdir -p /teaspeak/database && \
-    chown -R teaspeak:teaspeak /teaspeak && \
-    chmod -R 755 /teaspeak && \
-    chmod 777 /teaspeak/logs && \
-    chmod 777 /teaspeak/data && \
-    chmod 777 /teaspeak/config && \
-    chmod 777 /teaspeak/database && \
-    setcap "cap_net_bind_service=+ep" /teaspeak/TeaSpeakServer
+# Create necessary directories one by one
+RUN mkdir -p /teaspeak/logs \
+    && mkdir -p /teaspeak/files \
+    && mkdir -p /teaspeak/config \
+    && mkdir -p /teaspeak/data \
+    && mkdir -p /teaspeak/database
+
+# Set permissions
+RUN chown -R teaspeak:teaspeak /teaspeak \
+    && chmod -R 755 /teaspeak \
+    && chmod 777 /teaspeak/logs \
+    && chmod 777 /teaspeak/data \
+    && chmod 777 /teaspeak/config \
+    && chmod 777 /teaspeak/database
 
 USER teaspeak
+
+# Copy start script
+COPY --chown=teaspeak:teaspeak start.sh .
+RUN chmod +x start.sh
 
 # Expose ports
 EXPOSE 9987/udp
 EXPOSE 10101
 EXPOSE 30303
-
-# Copy start script
-COPY --chown=teaspeak:teaspeak start.sh .
-RUN chmod +x start.sh
 
 # Set default environment variables
 ENV VOICE_PORT=9987 \
