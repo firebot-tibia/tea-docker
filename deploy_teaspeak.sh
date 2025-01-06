@@ -78,6 +78,8 @@ function run_teaspeak_container {
         -e VOICE_PORT="$voice_port" \
         -e QUERY_PORT="$query_port" \
         -e FILE_PORT="$file_port" \
+        -e TS3SERVER_LICENSE="accept" \
+        --ulimit nofile=32768:32768 \
         -p "$exposed_voice_port:$voice_port/udp" \
         -p "$exposed_query_port:$query_port" \
         -p "$exposed_file_port:$file_port" \
@@ -91,6 +93,30 @@ function run_teaspeak_container {
         docker logs "$name"
         exit 1
     fi
+}
+
+function verify_server_connectivity {
+    local name=$1
+    local query_port=$2
+    
+    echo "Verifying $name server connectivity..."
+    # Wait for server to fully start
+    sleep 10
+    
+    # Try to connect to query port
+    if ! nc -z localhost "$query_port"; then
+        echo "Warning: Server $name not responding on port $query_port"
+        docker logs "$name"
+    else
+        echo "Server $name is accepting connections"
+    fi
+}
+
+# Add this to your create_directories function
+function fix_permissions {
+    echo "Fixing permissions..."
+    sudo chown -R 1000:1000 ./persistence
+    sudo chmod -R 755 ./persistence
 }
 
 # Function to verify containers are running
@@ -131,7 +157,6 @@ function configure_firewall {
     echo "Firewall configured successfully"
     sudo ufw status numbered | grep -E '9987|9988|10101|10102|30303|30304'
 }
-
 # Main script execution
 echo "Starting TeaSpeak deployment..."
 
@@ -144,6 +169,7 @@ configure_firewall
 
 # Create directories
 create_directories
+fix_permissions
 
 # Build image
 build_image
@@ -155,12 +181,15 @@ run_teaspeak_container "$TEASPEAK2_NAME" 9987 10101 30303 9988 10102 30304
 # Verify deployment
 verify_containers
 
+# Verify connectivity
+verify_server_connectivity "$TEASPEAK1_NAME" 10101
+verify_server_connectivity "$TEASPEAK2_NAME" 10102
+
 echo "Deployment completed successfully"
 
-# Show container status
+# Show status
 echo -e "\nContainer Status:"
 docker ps | grep "teaspeak"
-
-# Show firewall status
-echo -e "\nFirewall Status for TeaSpeak ports:"
-sudo ufw status | grep -E '9987|9988|10101|10102|30303|30304'
+echo -e "\nServer Versions:"
+docker exec "$TEASPEAK1_NAME" ./teaspeak-server --version
+docker exec "$TEASPEAK2_NAME" ./teaspeak-server --version
