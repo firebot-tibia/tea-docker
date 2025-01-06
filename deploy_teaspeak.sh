@@ -92,14 +92,14 @@ function run_teaspeak_container {
     docker run -d \
         --name "$name" \
         --restart always \
-        --network host \  # Add this line
+        --network host \
         -e VOICE_PORT="$voice_port" \
         -e QUERY_PORT="$query_port" \
         -e FILE_PORT="$file_port" \
         -e TS3SERVER_LICENSE="accept" \
         --ulimit nofile=32768:32768 \
-        --cap-add=NET_ADMIN \  # Add this line
-        --cap-add=NET_BIND_SERVICE \  # Add this line
+        --cap-add=NET_ADMIN \
+        --cap-add=NET_BIND_SERVICE \
         -v "$(pwd)/persistence/$name/data:/teaspeak/data" \
         -v "$(pwd)/persistence/$name/config:/teaspeak/config" \
         -v "$(pwd)/persistence/$name/logs:/teaspeak/logs" \
