@@ -59,7 +59,24 @@ function build_image {
     fi
 }
 
-# Function to run a teaspeak container
+# Add this function to your script
+function check_network_config {
+    echo "Checking network configuration..."
+    
+    # Check if system is allowing IPv6
+    if [ -f /proc/sys/net/ipv6/conf/all/disable_ipv6 ]; then
+        echo "Temporarily enabling IPv6..."
+        sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0
+        sudo sysctl -w net.ipv6.conf.default.disable_ipv6=0
+    fi
+    
+    # Ensure proper network bindings
+    sudo sysctl -w net.ipv4.ip_nonlocal_bind=1
+    
+    # Apply changes
+    sudo sysctl -p
+}
+
 function run_teaspeak_container {
     local name=$1
     local voice_port=$2
@@ -75,14 +92,14 @@ function run_teaspeak_container {
     docker run -d \
         --name "$name" \
         --restart always \
+        --network host \  # Add this line
         -e VOICE_PORT="$voice_port" \
         -e QUERY_PORT="$query_port" \
         -e FILE_PORT="$file_port" \
         -e TS3SERVER_LICENSE="accept" \
         --ulimit nofile=32768:32768 \
-        -p "$exposed_voice_port:$voice_port/udp" \
-        -p "$exposed_query_port:$query_port" \
-        -p "$exposed_file_port:$file_port" \
+        --cap-add=NET_ADMIN \  # Add this line
+        --cap-add=NET_BIND_SERVICE \  # Add this line
         -v "$(pwd)/persistence/$name/data:/teaspeak/data" \
         -v "$(pwd)/persistence/$name/config:/teaspeak/config" \
         -v "$(pwd)/persistence/$name/logs:/teaspeak/logs" \
@@ -232,6 +249,9 @@ verify_server_connectivity "$TEASPEAK2_NAME" 10102
 
 # Verify external access
 verify_external_access
+
+# Add after configure_firewall
+check_network_config
 
 echo "Deployment completed successfully"
 
