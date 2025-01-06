@@ -1,0 +1,61 @@
+version: 15
+general:
+  license: none
+  database:
+    url: sqlite://TeaData.sqlite
+    sqlite:
+      locking_mode: EXCLUSIVE
+      sync_mode: NORMAL
+      journal_mode: WAL
+  crash_path: crash_dumps/
+  command_prefix: .
+  permission_mapping: resources/permission_mapping.txt
+
+binding:
+  voice:
+    default_host: "0.0.0.0,::"
+    enforce: 0
+  web:
+    default_host: 0.0.0.0,[::]
+  query:
+    port: 10101
+    host: 0.0.0.0,[::]
+  file:
+    port: 30303
+    host: 0.0.0.0,[::]
+
+voice:
+  default_port: 9987
+  notifymute: 0
+  suppress_myts_warnings: 1
+  connect_limit: 10
+  client_connect_limit: 3
+  protocol:
+    experimental_31: 1
+
+server:
+  allow_weblist: 0
+  platform: Linux
+  version: "TeaSpeak 1.5.6 [Build: 1622030009]"
+  licence: 6
+  default_music_bot: 1
+  max_virtual_servers: 16
+  show_invisible_clients: 1
+
+web:
+  enabled: 1
+  upnp: 0
+
+music:
+  enabled: 1
+
+log:
+  level: 2
+  terminal_level: 2
+  colored: 0
+  vs_size: 0
+  path: logs/log_${time}(%Y-%m-%d_%H:%M:%S)_${group}.log
+
+database:
+  driver: "sqlite"
+  database: "/teaspeak/data/teaspeak.sqlite"

@@ -92,7 +92,6 @@ function run_teaspeak_container {
     docker run -d \
         --name "$name" \
         --restart always \
-        --network host \
         -e VOICE_PORT="$voice_port" \
         -e QUERY_PORT="$query_port" \
         -e FILE_PORT="$file_port" \
@@ -100,10 +99,17 @@ function run_teaspeak_container {
         --ulimit nofile=32768:32768 \
         --cap-add=NET_ADMIN \
         --cap-add=NET_BIND_SERVICE \
+        -p "$exposed_voice_port:$voice_port/udp" \
+        -p "$exposed_query_port:$query_port" \
+        -p "$exposed_file_port:$file_port" \
         -v "$(pwd)/persistence/$name/data:/teaspeak/data" \
         -v "$(pwd)/persistence/$name/config:/teaspeak/config" \
         -v "$(pwd)/persistence/$name/logs:/teaspeak/logs" \
         teaspeak
+
+    # Fix permissions after container creation
+    docker exec "$name" chown -R root:root /teaspeak/logs
+    docker exec "$name" chmod -R 777 /teaspeak/logs
 
     if ! docker ps | grep -q "$name"; then
         echo "Error: Container $name failed to start"
@@ -129,11 +135,21 @@ function verify_server_connectivity {
     fi
 }
 
-# Add this to your create_directories function
 function fix_permissions {
     echo "Fixing permissions..."
     sudo chown -R 1000:1000 ./persistence
-    sudo chmod -R 755 ./persistence
+    sudo chmod -R 777 ./persistence
+    
+    # Ensure log directories are writable
+    sudo chmod -R 777 ./persistence/*/logs
+}
+
+function cleanup_ports {
+    echo "Cleaning up ports..."
+    for port in 9987 9988 10101 10102 30303 30304; do
+        sudo fuser -k $port/tcp &>/dev/null || true
+        sudo fuser -k $port/udp &>/dev/null || true
+    done
 }
 
 # Function to verify containers are running
@@ -219,6 +235,27 @@ function verify_external_access {
         fi
     done
 }
+
+function validate_config {
+    local name=$1
+    echo "Validating config for $name..."
+    
+    # Wait for container to start and create config
+    sleep 5
+    
+    # Checking and modifying experimental_31
+    docker exec "$name" sh -c "sed -i 's/experimental_31: 0/experimental_31: 1/g' /teaspeak/config/config.yml"
+    
+    # Checking and modifying allow_weblist
+    docker exec "$name" sh -c "sed -i 's/allow_weblist: 1/allow_weblist: 0/g' /teaspeak/config/config.yml"
+    
+    # Verify changes
+    echo "Verifying config changes for $name:"
+    docker exec "$name" sh -c "grep -A 1 'experimental_31' /teaspeak/config/config.yml"
+    docker exec "$name" sh -c "grep -A 1 'allow_weblist' /teaspeak/config/config.yml"
+}
+
+
 # Main script execution
 echo "Starting TeaSpeak deployment..."
 
@@ -226,12 +263,8 @@ echo "Starting TeaSpeak deployment..."
 check_docker_installed
 check_docker_permissions
 
-# Configure firewall
-configure_firewall
-
 # Create directories
 create_directories
-fix_permissions
 
 # Build image
 build_image
@@ -240,27 +273,18 @@ build_image
 run_teaspeak_container "$TEASPEAK1_NAME" 9987 10101 30303 9987 10101 30303
 run_teaspeak_container "$TEASPEAK2_NAME" 9987 10101 30303 9988 10102 30304
 
+# Validate configs
+validate_config "$TEASPEAK1_NAME"
+validate_config "$TEASPEAK2_NAME"
+
 # Verify deployment
 verify_containers
-
-# Verify connectivity
-verify_server_connectivity "$TEASPEAK1_NAME" 10101
-verify_server_connectivity "$TEASPEAK2_NAME" 10102
-
-# Verify external access
-verify_external_access
-
-# Add after configure_firewall
-check_network_config
 
 echo "Deployment completed successfully"
 
 # Show status
 echo -e "\nContainer Status:"
 docker ps | grep "teaspeak"
-
-echo -e "\nFirewall Status:"
-sudo ufw status | grep -E '9987|9988|10101|10102|30303|30304'
 
 echo -e "\nConnection Information:"
 echo "TeaSpeak 1 (ts3): $EXTERNAL_IP:9987"

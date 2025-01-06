@@ -1,0 +1,118 @@
+[2025-01-06 22:08:21] [DEBUG] Log successfully started!
+[2025-01-06 22:08:21] [INFO ]   GEN | Starting TeaSpeak-Server v1.5.6 [Build: 1622030009]
+[2025-01-06 22:08:21] [DEBUG]   GEN | Initializing RTP library version Wed May 26 09:51:28 2021
+[2025-01-06 22:08:21] [DEBUG]   GEN | Generating new transport private key and certificate
+[2025-01-06 22:08:22] [DEBUG]   GEN | Transport certificate and private key successfully generated within 161ms
+[2025-01-06 22:08:22] [INFO ]   GEN | Starting music providers
+[2025-01-06 22:08:22] [DEBUG] [Music] Provider load order:
+[2025-01-06 22:08:22] [DEBUG] [Music] [0] providers/000ProviderFFMpeg.so
+[2025-01-06 22:08:22] [DEBUG] [Music] [1] providers/001ProviderYT.so
+[2025-01-06 22:08:22] [DEBUG] [Music] [FFMPEG] Using config file located at providers/config_ffmpeg.ini
+[2025-01-06 22:08:22] [DEBUG] [Music] [FFMPEG] Missing configuration file. Using default values
+[2025-01-06 22:08:22] [DEBUG] [Music] [FFMPEG] Executing command "ffmpeg -version"
+[2025-01-06 22:08:22] [INFO ] [Music] [FFMPEG] Resolved ffmpeg with version "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers"
+[2025-01-06 22:08:22] [DEBUG] [Music] [FFMPEG] Executing command "ffmpeg -protocols"
+[2025-01-06 22:08:22] [DEBUG] [Music] [FFMPEG] Executing command "ffmpeg -formats"
+[2025-01-06 22:08:23] [INFO ] [Music] Loaded successfully provider FFMpeg
+[2025-01-06 22:08:23] [INFO ] [Music] Loaded successfully provider YouTube
+[2025-01-06 22:08:23] [INFO ] [Music] [YT-DL] Compiling patterns
+[2025-01-06 22:08:23] [INFO ] [Music] [YT-DL] Patterns compiled (154ms)
+[2025-01-06 22:08:23] [DEBUG]   GEN | Created a new async thread pool!
+[2025-01-06 22:08:23] [INFO ]   GEN | Upgrading database from version -1 to 18. This could take a moment!
+[2025-01-06 22:08:23] [INFO ]   GEN | Database upgrade took 36ms
+[2025-01-06 22:08:23] [INFO ]   GEN | Upgrading permissions from version -1 to 9. This could take a moment!
+[2025-01-06 22:08:23] [INFO ]   GEN | Permission upgrade took 5ms
+[2025-01-06 22:08:23] [DEBUG]   GEN | Created a new async thread pool!
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating new instance groups
+[2025-01-06 22:08:24] [ERROR] GLOBL | Default permission file contains unknown permission. Key: b_virtualserver_select_godmode
+[2025-01-06 22:08:24] [ERROR] GLOBL | Default permission file contains unknown permission. Key: b_virtualserver_select_godmode
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Read 8 default groups
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating default group Guest Server Query with type 0
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating default group Admin Server Query with type 0
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating default group Server Admin with type 1
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating default group Normal with type 1
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating default group Guest with type 1
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating default group Channel Admin with type 2
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating default group Operator with type 2
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Creating default group Guest with type 2
+[2025-01-06 22:08:24] [DEBUG]   GEN | Saved 5/5 server and 3/3 channel group permissions in 4ms or 0ms
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Instance admin query group id 2
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Instance guest query group id 1
+[2025-01-06 22:08:24] [INFO ]   GEN | Loaded 0 saved channels. Assembling...
+[2025-01-06 22:08:24] [INFO ]   GEN | Generating default tree
+[2025-01-06 22:08:24] [DEBUG]   GEN | Saved instance channel permissions for channel 5 ([cspacer05]Administrator Room) in 0ms
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Setting up monthly reset timestamp!
+[2025-01-06 22:08:24] [DEBUG] GLOBL | Deleting old bans
+[2025-01-06 22:08:24] [DEBUG]   GEN | Network event loop 1 started.
+[2025-01-06 22:08:24] [DEBUG]   GEN | Network event loop 2 started.
+[2025-01-06 22:08:24] [DEBUG]   GEN | Network event loop 3 started.
+[2025-01-06 22:08:24] [DEBUG]   GEN | Network event loop 4 started.
+[2025-01-06 22:08:24] [INFO ]  FILE | Started file system root at /teaspeak/files
+[2025-01-06 22:08:24] [INFO ]  FILE | Started to listen on 0.0.0.0:30303
+[2025-01-06 22:08:24] [INFO ]  FILE | Started to listen on [::]:30303
+[2025-01-06 22:08:24] [INFO ]   GEN | ------------------ [Server Query] ------------------
+[2025-01-06 22:08:24] [INFO ]   GEN |  New Admin Server Query login credentials generated
+[2025-01-06 22:08:24] [INFO ]   GEN |     Username: serveradmin
+[2025-01-06 22:08:24] [INFO ]   GEN |     Password: uCEpiIcCUC48
+[2025-01-06 22:08:24] [INFO ]   GEN | ------------------ [Server Query] ------------------
+[2025-01-06 22:08:24] [INFO ] QUERY | Starting server on 0.0.0.0,[::]:10101
+[2025-01-06 22:08:24] [INFO ] GLOBL | Generating server puzzles...
+[2025-01-06 22:08:24] [INFO ] GLOBL | Puzzles generated! Time required: 0ms
+[2025-01-06 22:08:24] [INFO ] GLOBL | Loading startup cache (This may take a while)
+[2025-01-06 22:08:24] [INFO ] GLOBL | Required 2ms to preload the startup cache. Cache needs 0mb
+[2025-01-06 22:08:24] [INFO ] GLOBL | Loaded 0 servers within 0ms. Server/sec: 0.000000
+[2025-01-06 22:08:24] [INFO ] GLOBL | Creating new TeaSpeak server...
+[2025-01-06 22:08:24] [WARNING ] GLOBL | Failed to execute SQL command DELETE FROM `tokens` WHERE `serverId` = :sid:  sql: DELETE FROM `tokens` WHERE `serverId` = :sid returned -> 1/no such column: serverId
+[2025-01-06 22:08:24] [DEBUG]     1 | Generating new server keypair
+[2025-01-06 22:08:24] [DEBUG]     1 | [Conversations] Loaded 0 conversations
+[2025-01-06 22:08:24] [INFO ]     1 | Loaded 0 saved channels. Assembling...
+[2025-01-06 22:08:24] [INFO ]     1 | Creating new channel tree (Copy from server 0)
+[2025-01-06 22:08:24] [INFO ]     1 | Loaded 5 saved channels. Assembling...
+[2025-01-06 22:08:24] [INFO ]     1 | ---------------------- Token ----------------------
+[2025-01-06 22:08:24] [INFO ]     1 |           The server's serveradmin token:          
+[2025-01-06 22:08:24] [INFO ]     1 |          vtJ2oQWuOvwNw4ZdOmjT1N1p6meVf9bD          
+[2025-01-06 22:08:24] [INFO ]     1 | 
+[2025-01-06 22:08:24] [INFO ]     1 |      Note: This token could be used just once!     
+[2025-01-06 22:08:24] [INFO ]     1 | ---------------------- Token ----------------------
+[2025-01-06 22:08:24] [DEBUG]     1 | [Property] Changing client property 'client_nickname' for 1 (New value: serveradmin, Column: client_nickname)
+[2025-01-06 22:08:24] [DEBUG]     1 | Successfully registered client serveradmin for server 1 with database id 1.
+[2025-01-06 22:08:24] [DEBUG]     1 |  - 1 | 0 ([cspacer01]┏╋━━━━━━◥◣◆◢◤━━━━━━╋┓)
+[2025-01-06 22:08:24] [DEBUG]     1 |  - 2 | 1 ([cspacer02] TeaSpeak Server)
+[2025-01-06 22:08:24] [DEBUG]     1 |  - 3 | 2 ([cspacer03]┗╋━━━━━━◥◣◆◢◤━━━━━━╋┛)
+[2025-01-06 22:08:24] [DEBUG]     1 |  - 4 | 3 ([cspacer04]Default Channel)
+[2025-01-06 22:08:24] [DEBUG]     1 |  - 5 | 4 ([cspacer05]Administrator Room)
+[2025-01-06 22:08:24] [DEBUG]     1 | Successfully registered client ibBaqwJ75MQyTCIlZ0PpIpHj1PM= for server 1 with database id 3.
+[2025-01-06 22:08:24] [DEBUG]     1 | [Property] Changing client property 'client_nickname' for 3 (New value: Im a music bot!, Column: client_nickname)
+[2025-01-06 22:08:24] [DEBUG]     1 | [Property] Changing client property 'client_lastconnected' for 3 (New value: 1736201304, Column: client_last_connected)
+[2025-01-06 22:08:24] [ERROR]     1 | Failed to allocate network read event for voice server binding 0.0.0.0:9987
+[2025-01-06 22:08:24] [ERROR]     1 | Failed to allocate network read event for voice server binding :::9987
+[2025-01-06 22:08:24] [INFO ]     1 | [Web] Starting server on 0.0.0.0,[::]:9987
+[2025-01-06 22:08:24] [DEBUG]     1 | [unknown_type:0/Im a music bot! | 1] Recalculated talk power. New value: 0 Old value: 0
+[2025-01-06 22:08:24] [DEBUG]     1 | [unknown_type:0/Im a music bot! | 1] Client move timings: timings for : 13ms
+[2025-01-06 22:08:24] [DEBUG]   - chan tree l: @0ms: 0ms
+[2025-01-06 22:08:24] [DEBUG]   - channel res: @0ms: 0ms
+[2025-01-06 22:08:24] [DEBUG]   - target show: @9ms: 9ms
+[2025-01-06 22:08:24] [DEBUG]   - notify view: @11ms: 1ms
+[2025-01-06 22:08:24] [DEBUG]   - lock own tr: @11ms: 0ms
+[2025-01-06 22:08:24] [DEBUG]   - perm gr upd: @11ms: 0ms
+[2025-01-06 22:08:24] [DEBUG]   - notify cpro: @11ms: 0ms
+[2025-01-06 22:08:24] [DEBUG]   - notify_t_pr: @13ms: 1ms
+[2025-01-06 22:08:24] [DEBUG]     1 | Cleaning up conversation cache.
+[2025-01-06 22:08:24] [INFO ] GLOBL | Terminal pipe started (Incoming: /tmp/teaspeak_1_in.term, Outgoing: /tmp/teaspeak_1_out.term).
+[2025-01-06 22:08:44] [DEBUG] GLOBL | Successfully resolved the hostname to 188.40.64.107
+[2025-01-06 22:08:45] [INFO ] GLOBL | Received new web default certificate. Revision 50f3b43e4f7264d9c5gg669321ed81fbd93f40cfgb504f62fb4317b5g9e90g0bge38d5c50d97460df9bb8d6b7632744g94cf054f10e7ddecgec0e3dbb2539333
+[2025-01-06 22:08:45] [INFO ] GLOBL | Instance integrity has been validated.
+[2025-01-06 22:13:53] [INFO ] GLOBL | Got stop signal (SIGTERM). Stopping instance.
+[2025-01-06 22:13:53] [INFO ]   GEN | Stopping all server instances!
+[2025-01-06 22:13:53] [INFO ]   GEN | Stopping application
+[2025-01-06 22:13:53] [DEBUG] GLOBL | Stopping all virtual servers
+[2025-01-06 22:13:53] [DEBUG] GLOBL | All virtual server stopped
+[2025-01-06 22:13:53] [DEBUG] QUERY | Stopping query server
+[2025-01-06 22:13:53] [DEBUG] QUERY | Query server stopped
+[2025-01-06 22:13:53] [DEBUG]  FILE | Stopping file server
+[2025-01-06 22:13:53] [DEBUG]  FILE | File server stopped
+[2025-01-06 22:13:53] [DEBUG]   GEN | Network event loop 1 exited.
+[2025-01-06 22:13:53] [DEBUG]   GEN | Network event loop 2 exited.
+[2025-01-06 22:13:53] [DEBUG]   GEN | Network event loop 3 exited.
+[2025-01-06 22:13:53] [DEBUG]   GEN | Network event loop 4 exited.
+[2025-01-06 22:13:54] [INFO ]   GEN | Application suspend successful!
