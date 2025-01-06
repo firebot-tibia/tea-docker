@@ -138,24 +138,69 @@ function configure_firewall {
     
     # Enable UFW if not already enabled
     if ! sudo ufw status | grep -q "Status: active"; then
+        echo "Enabling UFW firewall..."
         sudo ufw --force enable
     fi
     
-    # Allow TeaSpeak 1 ports
-    sudo ufw allow 9987/udp comment 'TeaSpeak 1 Voice'
-    sudo ufw allow 10101/tcp comment 'TeaSpeak 1 Query'
-    sudo ufw allow 30303/tcp comment 'TeaSpeak 1 File'
+    echo "Setting up explicit firewall rules..."
     
-    # Allow TeaSpeak 2 ports
-    sudo ufw allow 9988/udp comment 'TeaSpeak 2 Voice'
-    sudo ufw allow 10102/tcp comment 'TeaSpeak 2 Query'
-    sudo ufw allow 30304/tcp comment 'TeaSpeak 2 File'
+    # Allow TeaSpeak 1 (ts3) ports
+    sudo ufw allow from any to any port 9987 proto udp comment 'TeaSpeak 1 Voice'
+    sudo ufw allow from any to any port 10101 proto tcp comment 'TeaSpeak 1 Query'
+    sudo ufw allow from any to any port 30303 proto tcp comment 'TeaSpeak 1 File'
+    
+    # Allow TeaSpeak 2 (ourobra) ports
+    sudo ufw allow from any to any port 9988 proto udp comment 'TeaSpeak 2 Voice'
+    sudo ufw allow from any to any port 10102 proto tcp comment 'TeaSpeak 2 Query'
+    sudo ufw allow from any to any port 30304 proto tcp comment 'TeaSpeak 2 File'
     
     # Reload firewall
+    echo "Reloading firewall rules..."
     sudo ufw reload
     
-    echo "Firewall configured successfully"
-    sudo ufw status numbered | grep -E '9987|9988|10101|10102|30303|30304'
+    # Display firewall status
+    echo "Current firewall rules:"
+    sudo ufw status verbose | grep -E '9987|9988|10101|10102|30303|30304'
+    
+    # Test port accessibility
+    echo "Testing port accessibility..."
+    which nc >/dev/null || sudo apt-get install -y netcat
+    
+    echo "Testing UDP ports..."
+    nc -uvz localhost 9987 &>/dev/null && echo "Port 9987 (UDP) is open" || echo "Port 9987 (UDP) is closed"
+    nc -uvz localhost 9988 &>/dev/null && echo "Port 9988 (UDP) is open" || echo "Port 9988 (UDP) is closed"
+    
+    echo "Testing TCP ports..."
+    nc -zvw3 localhost 10101 &>/dev/null && echo "Port 10101 (TCP) is open" || echo "Port 10101 (TCP) is closed"
+    nc -zvw3 localhost 10102 &>/dev/null && echo "Port 10102 (TCP) is open" || echo "Port 10102 (TCP) is closed"
+    nc -zvw3 localhost 30303 &>/dev/null && echo "Port 30303 (TCP) is open" || echo "Port 30303 (TCP) is closed"
+    nc -zvw3 localhost 30304 &>/dev/null && echo "Port 30304 (TCP) is open" || echo "Port 30304 (TCP) is closed"
+}
+
+# Add this new function to verify external access
+function verify_external_access {
+    echo "Checking external IP address..."
+    EXTERNAL_IP=$(curl -s ifconfig.me)
+    echo "External IP: $EXTERNAL_IP"
+    
+    echo "Testing external port accessibility..."
+    echo "Please wait, this may take a moment..."
+    
+    for port in 9987 9988; do
+        if nc -uvz -w 5 $EXTERNAL_IP $port 2>/dev/null; then
+            echo "UDP Port $port is accessible from outside"
+        else
+            echo "Warning: UDP Port $port might be blocked"
+        fi
+    done
+    
+    for port in 10101 10102 30303 30304; do
+        if nc -zvw3 $EXTERNAL_IP $port 2>/dev/null; then
+            echo "TCP Port $port is accessible from outside"
+        else
+            echo "Warning: TCP Port $port might be blocked"
+        fi
+    done
 }
 # Main script execution
 echo "Starting TeaSpeak deployment..."
@@ -185,11 +230,18 @@ verify_containers
 verify_server_connectivity "$TEASPEAK1_NAME" 10101
 verify_server_connectivity "$TEASPEAK2_NAME" 10102
 
+# Verify external access
+verify_external_access
+
 echo "Deployment completed successfully"
 
 # Show status
 echo -e "\nContainer Status:"
 docker ps | grep "teaspeak"
-echo -e "\nServer Versions:"
-docker exec "$TEASPEAK1_NAME" ./teaspeak-server --version
-docker exec "$TEASPEAK2_NAME" ./teaspeak-server --version
+
+echo -e "\nFirewall Status:"
+sudo ufw status | grep -E '9987|9988|10101|10102|30303|30304'
+
+echo -e "\nConnection Information:"
+echo "TeaSpeak 1 (ts3): $EXTERNAL_IP:9987"
+echo "TeaSpeak 2 (ourobra): $EXTERNAL_IP:9988"
