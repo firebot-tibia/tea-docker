@@ -36,8 +36,8 @@ function check_docker_permissions {
 # Function to create required directories
 function create_directories {
     echo "Creating persistence directories..."
-    mkdir -p ./persistence/teaspeak1/{data,config,logs}
-    mkdir -p ./persistence/teaspeak2/{data,config,logs}
+    mkdir -p ./persistence/${TEASPEAK1_NAME}/{data,config,logs}
+    mkdir -p ./persistence/${TEASPEAK2_NAME}/{data,config,logs}
     chmod -R 777 ./persistence
 }
 
@@ -106,12 +106,41 @@ function verify_containers {
     done
 }
 
+# Function to configure firewall
+function configure_firewall {
+    echo "Configuring firewall rules..."
+    
+    # Enable UFW if not already enabled
+    if ! sudo ufw status | grep -q "Status: active"; then
+        sudo ufw --force enable
+    fi
+    
+    # Allow TeaSpeak 1 ports
+    sudo ufw allow 9987/udp comment 'TeaSpeak 1 Voice'
+    sudo ufw allow 10101/tcp comment 'TeaSpeak 1 Query'
+    sudo ufw allow 30303/tcp comment 'TeaSpeak 1 File'
+    
+    # Allow TeaSpeak 2 ports
+    sudo ufw allow 9988/udp comment 'TeaSpeak 2 Voice'
+    sudo ufw allow 10102/tcp comment 'TeaSpeak 2 Query'
+    sudo ufw allow 30304/tcp comment 'TeaSpeak 2 File'
+    
+    # Reload firewall
+    sudo ufw reload
+    
+    echo "Firewall configured successfully"
+    sudo ufw status numbered | grep -E '9987|9988|10101|10102|30303|30304'
+}
+
 # Main script execution
 echo "Starting TeaSpeak deployment..."
 
 # Check prerequisites
 check_docker_installed
 check_docker_permissions
+
+# Configure firewall
+configure_firewall
 
 # Create directories
 create_directories
@@ -131,3 +160,7 @@ echo "Deployment completed successfully"
 # Show container status
 echo -e "\nContainer Status:"
 docker ps | grep "teaspeak"
+
+# Show firewall status
+echo -e "\nFirewall Status for TeaSpeak ports:"
+sudo ufw status | grep -E '9987|9988|10101|10102|30303|30304'
