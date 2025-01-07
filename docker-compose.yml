@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   teaspeak:
     build: .
@@ -10,15 +8,15 @@ services:
       - "30303:30303"
     volumes:
       - teaspeak_data:/teaspeak/data
-      - teaspeak_config:/teaspeak/config
       - teaspeak_logs:/teaspeak/logs
       - teaspeak_files:/teaspeak/files
-      - teaspeak_certs:/teaspeak/certs
-    restart: always
+    environment:
+      - VOICE_PORT=9987
+      - QUERY_PORT=10101
+      - FILE_PORT=30303
+    network_mode: "bridge"
 
 volumes:
   teaspeak_data:
-  teaspeak_config:
   teaspeak_logs:
   teaspeak_files:
-  teaspeak_certs:

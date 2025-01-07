@@ -23,44 +23,6 @@ RUN wget https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-1.4.22.tar.gz \
     && tar -xzf TeaSpeak-1.4.22.tar.gz \
     && rm TeaSpeak-1.4.22.tar.gz
 
-# Create necessary directories
-RUN mkdir -p /teaspeak/logs && \
-    mkdir -p /teaspeak/files && \
-    mkdir -p /teaspeak/config && \
-    mkdir -p /teaspeak/data && \
-    mkdir -p /teaspeak/database && \
-    mkdir -p /teaspeak/certs
-
-# Generate SSL certificates
-RUN openssl req -x509 -nodes -days 365 \
-    -newkey rsa:2048 -keyout /teaspeak/certs/query_key.pem \
-    -out /teaspeak/certs/query_cert.pem \
-    -subj "/CN=teaspeak/O=teaspeak/C=US" && \
-    chmod 644 /teaspeak/certs/query_*.pem
-
-# Set proper permissions
-RUN chown -R teaspeak:teaspeak /teaspeak && \
-    chmod -R 755 /teaspeak && \
-    chmod -R 777 /teaspeak/logs && \
-    chmod -R 777 /teaspeak/data && \
-    chmod -R 777 /teaspeak/config && \
-    chmod -R 777 /teaspeak/database && \
-    chmod -R 755 /teaspeak/certs
-
-# Create initial config with modified settings
-RUN echo "version: 15" > /teaspeak/config.yml && \
-    echo "voice:" >> /teaspeak/config.yml && \
-    echo "  protocol:" >> /teaspeak/config.yml && \
-    echo "    experimental_31: 1" >> /teaspeak/config.yml && \
-    echo "server:" >> /teaspeak/config.yml && \
-    echo "  allow_weblist: 0" >> /teaspeak/config.yml && \
-    echo "query:" >> /teaspeak/config.yml && \
-    echo "  ssl:" >> /teaspeak/config.yml && \
-    echo "    certificate: /teaspeak/certs/query_cert.pem" >> /teaspeak/config.yml && \
-    echo "    privatekey: /teaspeak/certs/query_key.pem" >> /teaspeak/config.yml && \
-    chown teaspeak:teaspeak /teaspeak/config.yml && \
-    chmod 666 /teaspeak/config.yml
-
 # Set capabilities
 RUN setcap 'cap_net_bind_service=+ep' /teaspeak/TeaSpeakServer
 
