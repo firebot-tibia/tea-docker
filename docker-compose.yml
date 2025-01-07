@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  teaspeak:
+    build: .
+    ports:
+      - "9987:9987/tcp"
+      - "9987:9987/udp"
+      - "10101:10101"
+      - "30303:30303"
+    volumes:
+      - teaspeak_data:/teaspeak/data
+      - teaspeak_config:/teaspeak/config
+      - teaspeak_logs:/teaspeak/logs
+      - teaspeak_files:/teaspeak/files
+      - teaspeak_certs:/teaspeak/certs
+    restart: always
+
+volumes:
+  teaspeak_data:
+  teaspeak_config:
+  teaspeak_logs:
+  teaspeak_files:
+  teaspeak_certs:
