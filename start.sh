@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Exit on any error
-set -e
-
 # Create required directories
 mkdir -p /teaspeak/data
 mkdir -p /teaspeak/config
@@ -18,8 +15,14 @@ chmod +x ./TeaSpeakServer
 
 # Configure settings before starting
 if [ -f /teaspeak/config.yml ]; then
+    # Update experimental and weblist settings
     sed -i 's/experimental_31: 0/experimental_31: 1/g' /teaspeak/config.yml
     sed -i 's/allow_weblist: 1/allow_weblist: 0/g' /teaspeak/config.yml
+    
+    # Configure voice port for both TCP and UDP
+    sed -i '/voice:/!b;n;c\  bind: ["0.0.0.0:'"${VOICE_PORT}"'/tcp", "0.0.0.0:'"${VOICE_PORT}"'/udp"]' /teaspeak/config.yml
+    sed -i '/voice:/!b;n;n;c\  ip: "0.0.0.0"' /teaspeak/config.yml
+    
     echo "Config updated successfully"
 else
     echo "Waiting for config file to be created..."
@@ -32,8 +35,15 @@ else
         if [ -f /teaspeak/config.yml ]; then
             kill $PID
             wait $PID
+            
+            # Update experimental and weblist settings
             sed -i 's/experimental_31: 0/experimental_31: 1/g' /teaspeak/config.yml
             sed -i 's/allow_weblist: 1/allow_weblist: 0/g' /teaspeak/config.yml
+            
+            # Configure voice port for both TCP and UDP
+            sed -i '/voice:/!b;n;c\  bind: ["0.0.0.0:'"${VOICE_PORT}"'/tcp", "0.0.0.0:'"${VOICE_PORT}"'/udp"]' /teaspeak/config.yml
+            sed -i '/voice:/!b;n;n;c\  ip: "0.0.0.0"' /teaspeak/config.yml
+            
             echo "Config updated successfully"
             break
         fi

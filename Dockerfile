@@ -41,6 +41,7 @@ RUN setcap 'cap_net_bind_service=+ep' /teaspeak/TeaSpeakServer
 USER teaspeak
 
 # Expose required ports
+EXPOSE 9987/tcp
 EXPOSE 9987/udp
 EXPOSE 10101
 EXPOSE 30303
