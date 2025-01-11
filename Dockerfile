@@ -29,12 +29,11 @@ RUN set -ex \
     # Download e configuração do TeaSpeak
     && wget -nv -O /ts/TeaSpeak.tar.gz \
         "https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-${TEASPEAK_VERSION}.tar.gz" \
-    && tar -xzvf /ts/TeaSpeak.tar.gz -C /ts \  # Adicionado v para verbose
-    && ls -la /ts \  # Listar conteúdo do diretório
+    && tar -xzvf /ts/TeaSpeak.tar.gz -C /ts \  
+    && ls -la /ts \  
     && rm /ts/TeaSpeak.tar.gz \
     && echo "" > /ts/config/config.yml \
     && ln -sf /ts/config/config.yml /ts/config.yml \
-
 
 # Terceira etapa: Configuração de timezone, usuário e permissões
 RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
