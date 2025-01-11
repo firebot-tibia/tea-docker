@@ -56,4 +56,4 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
 
 USER teaspeak
 
-ENTRYPOINT ["/bin/bash", "-c", "ls -la && exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
+ENTRYPOINT ["/bin/bash", "-c", "cd .. && ls -la && exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
