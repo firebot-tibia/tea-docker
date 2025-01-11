@@ -14,16 +14,6 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates \
     openssl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Segunda etapa: Configuração de certificados
-RUN mkdir -p /usr/share/ca-certificates/local && \
-    update-ca-certificates
-
-# Terceira etapa: Instalação das demais dependências
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget \
     curl \
     ffmpeg \
@@ -31,7 +21,7 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Quarta etapa: Configuração do TeaSpeak
+# Segunda etapa: Configuração do TeaSpeak
 RUN mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_dumps && \
     wget -nv -O /ts/TeaSpeak.tar.gz \
         "https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-${TEASPEAK_VERSION}.tar.gz" && \
@@ -40,12 +30,16 @@ RUN mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_
     echo "" > /ts/config/config.yml && \
     ln -sf /ts/config/config.yml /ts/config.yml
 
-# Quinta etapa: Configuração de timezone e usuário
+# Copiar script de inicialização
+COPY start.sh /ts/start.sh
+
+# Terceira etapa: Configuração de timezone, usuário e permissões
 RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
     groupadd -g ${gid} teaspeak && \
     useradd -M -u ${uid} -g ${gid} teaspeak && \
-    chown -R ${uid}:${gid} /ts && \
-    chmod +x /ts/TeaSpeakServer
+    chmod +x /ts/TeaSpeakServer && \
+    chmod +x /ts/start.sh && \
+    chown -R ${uid}:${gid} /ts
 
 WORKDIR /ts
 
@@ -55,8 +49,5 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
     TZ="America/Sao_Paulo"
 
 USER teaspeak
-
-COPY start.sh /ts/start.sh
-RUN chmod +x /ts/start.sh
 
 ENTRYPOINT ["/ts/start.sh"]

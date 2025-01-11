@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 echo "=== Current Directory ==="
 pwd
 
@@ -10,9 +12,6 @@ find /ts -type f -executable
 
 echo "=== Full Directory Structure ==="
 ls -R /ts
-
-echo "=== File Type Check ==="
-file /ts/TeaSpeakServer
 
 echo "=== Starting TeaSpeak ==="
 cd /ts
