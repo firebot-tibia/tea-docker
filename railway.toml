@@ -15,9 +15,3 @@ path = "/ts/database"
 
 [volume.crash_dumps]
 path = "/ts/crash_dumps"
-
-[build]
-builder = "docker"
-
-[deploy]
-startCommand = "./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite"
