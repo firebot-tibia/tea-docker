@@ -9,9 +9,13 @@ ARG uid=4242
 ARG gid=4242
 ARG TEASPEAK_VERSION=1.4.22
 
+# Copiar script de inicialização
+COPY start.sh /ts/start.sh
+
 # Primeira etapa: Instalação básica
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+RUN set -ex \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates \
     openssl \
     wget \
@@ -30,8 +34,6 @@ RUN mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_
     echo "" > /ts/config/config.yml && \
     ln -sf /ts/config/config.yml /ts/config.yml
 
-# Copiar script de inicialização
-COPY start.sh /ts/start.sh
 
 # Terceira etapa: Configuração de timezone, usuário e permissões
 RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
@@ -54,4 +56,4 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
 
 USER teaspeak
 
-ENTRYPOINT ["/ts/start.sh"]
+ENTRYPOINT ["/bin/bash", "-c", "cd /ts && exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
