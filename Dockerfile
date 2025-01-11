@@ -33,9 +33,9 @@ RUN set -ex \
     && ls -la /ts \  
     && rm /ts/TeaSpeak.tar.gz \
     && echo "" > /ts/config/config.yml \
-    && ln -sf /ts/config/config.yml /ts/config.yml \
+    && ln -sf /ts/config/config.yml /ts/config.yml
 
-# Terceira etapa: Configuração de timezone, usuário e permissões
+
 RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
     groupadd -g ${gid} teaspeak && \
     useradd -M -u ${uid} -g ${gid} teaspeak && \
