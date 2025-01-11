@@ -16,23 +16,24 @@ COPY start.sh /ts/start.sh
 RUN set -ex \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates \
-    openssl \
-    wget \
-    curl \
-    ffmpeg \
-    tzdata \
+        ca-certificates \
+        openssl \
+        wget \
+        curl \
+        ffmpeg \
+        tzdata \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Segunda etapa: Configuração do TeaSpeak
-RUN mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_dumps && \
-    wget -nv -O /ts/TeaSpeak.tar.gz \
-        "https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-${TEASPEAK_VERSION}.tar.gz" && \
-    tar -xzf /ts/TeaSpeak.tar.gz -C /ts && \
-    rm /ts/TeaSpeak.tar.gz && \
-    echo "" > /ts/config/config.yml && \
-    ln -sf /ts/config/config.yml /ts/config.yml
+    && rm -rf /var/lib/apt/lists/* \
+    # Criar diretórios
+    && mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_dumps \
+    # Download e configuração do TeaSpeak
+    && wget -nv -O /ts/TeaSpeak.tar.gz \
+        "https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-${TEASPEAK_VERSION}.tar.gz" \
+    && tar -xzvf /ts/TeaSpeak.tar.gz -C /ts \  # Adicionado v para verbose
+    && ls -la /ts \  # Listar conteúdo do diretório
+    && rm /ts/TeaSpeak.tar.gz \
+    && echo "" > /ts/config/config.yml \
+    && ln -sf /ts/config/config.yml /ts/config.yml \
 
 
 # Terceira etapa: Configuração de timezone, usuário e permissões
@@ -56,4 +57,4 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
 
 USER teaspeak
 
-ENTRYPOINT ["/bin/bash", "-c", "cd .. && ls -la && exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
+ENTRYPOINT ["/bin/bash", "-c", "ls -la && /ts && exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
