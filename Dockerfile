@@ -22,16 +22,23 @@ RUN set -ex \
         curl \
         ffmpeg \
         tzdata \
+        tree \  # Adicionar tree para melhor visualização
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    # Criar diretórios
     && mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_dumps \
-    # Download e configuração do TeaSpeak
-    && wget -nv -O /ts/TeaSpeak.tar.gz \
+    && cd /ts \
+    && wget -nv -O TeaSpeak.tar.gz \
         "https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-${TEASPEAK_VERSION}.tar.gz" \
-    && tar -xzvf /ts/TeaSpeak.tar.gz -C /ts \  
-    && ls -la /ts \  
-    && rm /ts/TeaSpeak.tar.gz \
+    && echo "=== Conteúdo do arquivo tar ===" \
+    && tar -tvf TeaSpeak.tar.gz \
+    && echo "=== Extraindo arquivo ===" \
+    && tar -xzvf TeaSpeak.tar.gz \
+    && echo "=== Conteúdo do diretório após extração ===" \
+    && ls -la /ts \
+    && tree /ts \
+    && echo "=== Procurando executável ===" \
+    && find /ts -type f -executable \
+    && rm TeaSpeak.tar.gz \
     && echo "" > /ts/config/config.yml \
     && ln -sf /ts/config/config.yml /ts/config.yml
 
@@ -56,4 +63,13 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
 
 USER teaspeak
 
-ENTRYPOINT ["/bin/bash", "-c", "cd .. && ls -la && cd /ts && exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
+ENTRYPOINT ["/bin/bash", "-c", "\
+    echo '=== Current Directory ==='; \
+    pwd; \
+    echo '=== Directory Content ==='; \
+    ls -la; \
+    echo '=== Executables ==='; \
+    find . -type f -executable; \
+    echo '=== Starting TeaSpeak ==='; \
+    exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite \
+"]
