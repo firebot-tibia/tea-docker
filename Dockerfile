@@ -21,9 +21,6 @@ RUN set -ex \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -r teaspeak && \
-    useradd -r -g teaspeak -m -d /teaspeak teaspeak
-
 WORKDIR /teaspeak
 
 # Create necessary directories
