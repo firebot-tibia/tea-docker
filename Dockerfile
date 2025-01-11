@@ -56,5 +56,5 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
 
 USER teaspeak
 
-ENTRYPOINT ["/ts/TeaSpeakServer"]
+ENTRYPOINT ["./TeaSpeakServer"]
 CMD ["-Pgeneral.database.url=sqlite://database/TeaData.sqlite"]

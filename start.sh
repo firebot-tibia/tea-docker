@@ -1,6 +1,3 @@
 #!/bin/bash
-
-# Start TeaSpeak server
-echo "Starting TeaSpeak server..."
-exec ./TeaSpeakServer
-
+cd /ts
+exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite
