@@ -12,22 +12,22 @@ services:
     volumes:
       - type: volume
         source: teaspeak_certs
-        target: /ts/certs
+        target: /teaspeak/certs
       - type: volume
         source: teaspeak_config
-        target: /ts/config
+        target: /teaspeak/config
       - type: volume
         source: teaspeak_db
-        target: /ts/database
+        target: /teaspeak/database
       - type: volume
         source: teaspeak_files
-        target: /ts/files
+        target: /teaspeak/files
       - type: volume
         source: teaspeak_logs
-        target: /ts/logs
+        target: /teaspeak/logs
       - type: volume
         source: teaspeak_crash_dumps
-        target: /ts/crash_dumps
+        target: /teaspeak/crash_dumps
     restart: unless-stopped
 
 volumes:
