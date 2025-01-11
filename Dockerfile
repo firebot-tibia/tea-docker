@@ -66,6 +66,10 @@ USER teaspeak
 ENTRYPOINT ["/bin/bash", "-c", "\
     echo '=== Current Directory ==='; \
     pwd; \
+    echo '=== Directory Inside ==='; \
+    cd ..; \
+    echo '=== TS ==='; \
+    cd ts \
     echo '=== Directory Content ==='; \
     ls -la; \
     echo '=== Executables ==='; \
