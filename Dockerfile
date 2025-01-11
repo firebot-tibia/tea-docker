@@ -43,7 +43,11 @@ RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
 
 WORKDIR /ts
 
-EXPOSE 9987/tcp 9987/udp 10101/tcp 30303/tcp
+# Portas necessárias para o TeaSpeak
+EXPOSE 9987/tcp  
+EXPOSE 9987/udp  
+EXPOSE 10101/tcp 
+EXPOSE 30303/tcp 
 
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
     TZ="America/Sao_Paulo"

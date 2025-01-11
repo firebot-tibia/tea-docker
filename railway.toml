@@ -15,3 +15,6 @@ path = "/ts/database"
 
 [volume.crash_dumps]
 path = "/ts/crash_dumps"
+
+[deploy]
+exposed_ports = ["9987/udp", "9987/tcp", "10101/tcp", "30303/tcp"]
