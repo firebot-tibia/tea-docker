@@ -9,7 +9,6 @@ ARG uid=4242
 ARG gid=4242
 ARG TEASPEAK_VERSION=1.4.22
 
-# Combine RUN commands and add error handling
 RUN set -ex \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -20,22 +19,19 @@ RUN set -ex \
         tzdata \
     && mkdir -p /usr/share/ca-certificates/local \
     && update-ca-certificates \
-    # Create directories
     && mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_dumps \
-    # Download specific TeaSpeak version
     && wget -nv -O /ts/TeaSpeak.tar.gz \
         "https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-${TEASPEAK_VERSION}.tar.gz" \
     && tar -xzf /ts/TeaSpeak.tar.gz -C /ts \
     && rm /ts/TeaSpeak.tar.gz \
     && echo "" > /ts/config/config.yml \
     && ln -sf /ts/config/config.yml /ts/config.yml \
-    # Setup timezone
     && ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
-    # Setup user and permissions
     && groupadd -g ${gid} teaspeak \
     && useradd -M -u ${uid} -g ${gid} teaspeak \
     && chown -R ${uid}:${gid} /ts \
-    # Cleanup
+    # Adicionar permissão de execução
+    && chmod +x /ts/TeaSpeakServer \
     && apt-get remove -y wget curl \
     && apt-get autoremove -y \
     && apt-get clean \
@@ -50,5 +46,6 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
 
 USER teaspeak
 
-ENTRYPOINT ["./TeaSpeakServer"]
+# Usando o nome correto do executável com maiúsculas
+ENTRYPOINT ["/ts/TeaSpeakServer"]
 CMD ["-Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
