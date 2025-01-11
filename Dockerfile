@@ -56,5 +56,7 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
 
 USER teaspeak
 
-ENTRYPOINT ["./TeaSpeakServer"]
-CMD ["-Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
+COPY start.sh /ts/start.sh
+RUN chmod +x /ts/start.sh
+
+ENTRYPOINT ["/ts/start.sh"]
