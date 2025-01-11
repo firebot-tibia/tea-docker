@@ -22,7 +22,7 @@ RUN set -ex \
         curl \
         ffmpeg \
         tzdata \
-        tree \  # Adicionar tree para melhor visualização
+        tree \  
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_dumps \
