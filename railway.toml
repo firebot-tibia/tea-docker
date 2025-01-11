@@ -1,0 +1,17 @@
+[volume.logs]
+path = "/ts/logs"
+
+[volume.certs]
+path = "/ts/certs"
+
+[volume.config]
+path = "/ts/config"
+
+[volume.files]
+path = "/ts/files"
+
+[volume.database]
+path = "/ts/database"
+
+[volume.crash_dumps]
+path = "/ts/crash_dumps"
