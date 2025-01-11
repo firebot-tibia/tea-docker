@@ -1,26 +1,39 @@
 services:
-  teaspeak:
-    build: .
-    ports:
-      - "9987:9987/tcp"
-      - "9987:9987/udp"
-      - "10101:10101"
-      - "30303:30303"
-    volumes:
-      - teaspeak_data:/teaspeak/data
-      - teaspeak_config:/teaspeak/config
-      - teaspeak_logs:/teaspeak/logs
-      - teaspeak_files:/teaspeak/files
-      - teaspeak_certs:/teaspeak/certs
+  teaspeak-server:
+    build: 
+      context: .
     environment:
-      - VOICE_PORT=9987
-      - QUERY_PORT=10101
-      - FILE_PORT=30303
-    network_mode: "bridge"
+      - TZ=America/Sao_Paulo
+    ports:
+      - "9987:9987/udp"
+      - "9987:9987/tcp"
+      - "10101:10101/tcp"
+      - "30303:30303/tcp"
+    volumes:
+      - type: volume
+        source: teaspeak_certs
+        target: /ts/certs
+      - type: volume
+        source: teaspeak_config
+        target: /ts/config
+      - type: volume
+        source: teaspeak_db
+        target: /ts/database
+      - type: volume
+        source: teaspeak_files
+        target: /ts/files
+      - type: volume
+        source: teaspeak_logs
+        target: /ts/logs
+      - type: volume
+        source: teaspeak_crash_dumps
+        target: /ts/crash_dumps
+    restart: unless-stopped
 
 volumes:
-  teaspeak_data:
-  teaspeak_config:
-  teaspeak_logs:
-  teaspeak_files:
   teaspeak_certs:
+  teaspeak_crash_dumps:
+  teaspeak_config:
+  teaspeak_db:
+  teaspeak_files:
+  teaspeak_logs:

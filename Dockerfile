@@ -1,70 +1,56 @@
 FROM --platform=linux/amd64 ubuntu:latest
 
-# Install required packages
-RUN apt-get update && apt-get install -y \
-    wget \
-    tar \
-    libatomic1 \
-    ca-certificates \
-    ffmpeg \
-    libcap2-bin \
-    sqlite3 \
-    openssl \
+LABEL version="2.0" \
+    description="A simple TeaSpeak server running on debian 11" \
+    org.opencontainers.image.description="A simple TeaSpeak server running on debian 11"
+
+ARG TARGETPLATFORM
+ARG uid=4242
+ARG gid=4242
+ARG TEASPEAK_VERSION=1.4.22
+
+# Combine RUN commands and add error handling
+RUN set -ex \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates \
+        wget \
+        curl \
+        ffmpeg \
+        tzdata \
+    && mkdir -p /usr/share/ca-certificates/local \
+    && update-ca-certificates \
+    # Create directories
+    && mkdir -p /ts /ts/logs /ts/certs /ts/files /ts/database /ts/config /ts/crash_dumps \
+    # Download specific TeaSpeak version
+    && wget -nv -O /ts/TeaSpeak.tar.gz \
+        "https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-${TEASPEAK_VERSION}.tar.gz" \
+    && tar -xzf /ts/TeaSpeak.tar.gz -C /ts \
+    && rm /ts/TeaSpeak.tar.gz \
+    && echo "" > /ts/config/config.yml \
+    && ln -sf /ts/config/config.yml /ts/config.yml \
+    # Setup timezone
+    && ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
+    # Setup user and permissions
+    && groupadd -g ${gid} teaspeak \
+    && useradd -M -u ${uid} -g ${gid} teaspeak \
+    && chown -R ${uid}:${gid} /ts \
+    # Cleanup
+    && apt-get remove -y wget curl \
+    && apt-get autoremove -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create teaspeak user and group
-RUN groupadd -r teaspeak && \
-    useradd -r -g teaspeak -m -d /teaspeak teaspeak
+WORKDIR /ts
 
-WORKDIR /teaspeak
+EXPOSE 9987/tcp 9987/udp 10101/tcp 30303/tcp
 
-# Download and extract TeaSpeak
-RUN wget https://repo.teaspeak.de/server/linux/amd64/TeaSpeak-1.4.22.tar.gz \
-    && tar -xzf TeaSpeak-1.4.22.tar.gz \
-    && rm TeaSpeak-1.4.22.tar.gz
+VOLUME ["/ts/logs", "/ts/certs", "/ts/config", "/ts/files", "/ts/database", "/ts/crash_dumps"]
 
-# Create necessary directories
-RUN mkdir -p /teaspeak/logs && \
-    mkdir -p /teaspeak/files && \
-    mkdir -p /teaspeak/config && \
-    mkdir -p /teaspeak/data && \
-    mkdir -p /teaspeak/database && \
-    mkdir -p /teaspeak/certs
-
-# Generate SSL certificates
-RUN openssl req -x509 -nodes -days 365 \
-    -newkey rsa:2048 -keyout /teaspeak/certs/query_key.pem \
-    -out /teaspeak/certs/query_cert.pem \
-    -subj "/CN=teaspeak/O=teaspeak/C=US" && \
-    chmod 644 /teaspeak/certs/query_*.pem
-
-# Set proper permissions
-RUN chown -R teaspeak:teaspeak /teaspeak && \
-    chmod -R 755 /teaspeak && \
-    chmod -R 777 /teaspeak/logs && \
-    chmod -R 777 /teaspeak/data && \
-    chmod -R 777 /teaspeak/config && \
-    chmod -R 777 /teaspeak/database && \
-    chmod -R 755 /teaspeak/certs
-
-# Set capabilities
-RUN setcap 'cap_net_bind_service=+ep' /teaspeak/TeaSpeakServer
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
+    TZ="America/Sao_Paulo"
 
 USER teaspeak
 
-# Expose ports
-EXPOSE 9987/tcp
-EXPOSE 9987/udp
-EXPOSE 10101
-EXPOSE 30303
-
-# Copy and setup start script
-COPY --chown=teaspeak:teaspeak start.sh .
-RUN chmod +x start.sh
-
-# Set environment variables
-ENV VOICE_PORT=9987 \
-    QUERY_PORT=10101 \
-    FILE_PORT=30303
-
-CMD ["./start.sh"]
+ENTRYPOINT ["./TeaSpeakServer"]
+CMD ["-Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
