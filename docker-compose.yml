@@ -1,5 +1,5 @@
 services:
-  teaspeak-server:
+  teaspeak-server-1:
     build: 
       context: .
     environment:
@@ -9,31 +9,61 @@ services:
       - "9987:9987/tcp"
       - "10101:10101/tcp"
       - "30303:30303/tcp"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
-      - type: volume
-        source: teaspeak_certs
-        target: /teaspeak/certs
-      - type: volume
-        source: teaspeak_config
-        target: /teaspeak/config
-      - type: volume
-        source: teaspeak_db
-        target: /teaspeak/database
-      - type: volume
-        source: teaspeak_files
-        target: /teaspeak/files
-      - type: volume
-        source: teaspeak_logs
-        target: /teaspeak/logs
-      - type: volume
-        source: teaspeak_crash_dumps
-        target: /teaspeak/crash_dumps
+      - teaspeak_certs_1:/teaspeak/certs
+      - teaspeak_config_1:/teaspeak/config
+      - teaspeak_db_1:/teaspeak/database
+      - teaspeak_files_1:/teaspeak/files
+      - teaspeak_logs_1:/teaspeak/logs
+      - teaspeak_crash_dumps_1:/teaspeak/crash_dumps
     restart: unless-stopped
+    networks:
+      teaspeak_network:
+        ipv4_address: 192.168.90.2
+
+  teaspeak-server-2:
+    build: 
+      context: .
+    environment:
+      - TZ=America/Sao_Paulo
+    ports:
+      - "9988:9987/udp"
+      - "9988:9987/tcp"
+      - "10102:10101/tcp"
+      - "30304:30303/tcp"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - teaspeak_certs_2:/teaspeak/certs
+      - teaspeak_config_2:/teaspeak/config
+      - teaspeak_db_2:/teaspeak/database
+      - teaspeak_files_2:/teaspeak/files
+      - teaspeak_logs_2:/teaspeak/logs
+      - teaspeak_crash_dumps_2:/teaspeak/crash_dumps
+    restart: unless-stopped
+    networks:
+      teaspeak_network:
+        ipv4_address: 192.168.90.3
+
+networks:
+  teaspeak_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.90.0/24
 
 volumes:
-  teaspeak_certs:
-  teaspeak_crash_dumps:
-  teaspeak_config:
-  teaspeak_db:
-  teaspeak_files:
-  teaspeak_logs:
+  teaspeak_certs_1:
+  teaspeak_crash_dumps_1:
+  teaspeak_config_1:
+  teaspeak_db_1:
+  teaspeak_files_1:
+  teaspeak_logs_1:
+  teaspeak_certs_2:
+  teaspeak_crash_dumps_2:
+  teaspeak_config_2:
+  teaspeak_db_2:
+  teaspeak_files_2:
+  teaspeak_logs_2:

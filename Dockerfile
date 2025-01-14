@@ -1,12 +1,13 @@
 FROM --platform=linux/amd64 ubuntu:latest
 
+LABEL version="2.0" \
+    maintainer="ESh4d0w, Markus Hadenfeldt <docker@teaspeak.de>, h1dden-da3m0n" \
+    description="A simple TeaSpeak server running on ubuntu 18.04 (amd64_stable)"
+
 ARG TARGETPLATFORM
 ARG uid=4242
 ARG gid=4242
 ARG TEASPEAK_VERSION=1.4.22
-
-# Copiar script de inicialização
-COPY start.sh /teaspeak/start.sh
 
 # Primeira etapa: Instalação básica
 RUN set -ex \
@@ -45,7 +46,6 @@ RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
     groupadd -g ${gid} teaspeak && \
     useradd -M -u ${uid} -g ${gid} teaspeak && \
     chmod +x /teaspeak/TeaSpeakServer && \
-    chmod +x /teaspeak/start.sh && \
     chown -R ${uid}:${gid} /teaspeak
 
 # Portas necessárias para o TeaSpeak
@@ -54,9 +54,16 @@ EXPOSE 9987/udp
 EXPOSE 10101/tcp 
 EXPOSE 30303/tcp 
 
+VOLUME ["/ts/logs", "/ts/certs", "/ts/config", "/ts/files", "/ts/database", "/ts/crash_dumps"]
+
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/ts/libs/" \
-    TZ="America/Sao_Paulo"
+    LD_PRELOAD="/ts/libs/libjemalloc.so.2" \
+    SERVER_VERSION="${SERVER_VERSION:-latest-$(date +%d%m%y)}" \
+    TZ="Europe/Berlin"
+
 
 USER teaspeak
 
-ENTRYPOINT ["/bin/bash", "-c", "exec ./TeaSpeakServer -Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
+ENTRYPOINT ["./TeaSpeakServer"]
+
+CMD ["-Pgeneral.database.url=sqlite://database/TeaData.sqlite"]
