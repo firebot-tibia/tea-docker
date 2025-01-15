@@ -9,8 +9,6 @@ services:
       - "9987:9987/tcp"
       - "10101:10101/tcp"
       - "30303:30303/tcp"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - teaspeak_certs_1:/teaspeak/certs
       - teaspeak_config_1:/teaspeak/config
@@ -18,10 +16,22 @@ services:
       - teaspeak_files_1:/teaspeak/files
       - teaspeak_logs_1:/teaspeak/logs
       - teaspeak_crash_dumps_1:/teaspeak/crash_dumps
+      - ./scripts:/teaspeak/scripts
+      - ./backups:/teaspeak/database/backups
     restart: unless-stopped
     networks:
       teaspeak_network:
         ipv4_address: 192.168.90.2
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "10101"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   teaspeak-server-2:
     build: 
@@ -33,8 +43,6 @@ services:
       - "9988:9987/tcp"
       - "10102:10101/tcp"
       - "30304:30303/tcp"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - teaspeak_certs_2:/teaspeak/certs
       - teaspeak_config_2:/teaspeak/config
@@ -42,10 +50,22 @@ services:
       - teaspeak_files_2:/teaspeak/files
       - teaspeak_logs_2:/teaspeak/logs
       - teaspeak_crash_dumps_2:/teaspeak/crash_dumps
+      - ./scripts:/teaspeak/scripts
+      - ./backups:/teaspeak/database/backups
     restart: unless-stopped
     networks:
       teaspeak_network:
         ipv4_address: 192.168.90.3
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "10101"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   teaspeak_network:
@@ -53,6 +73,7 @@ networks:
     ipam:
       config:
         - subnet: 192.168.90.0/24
+          gateway: 192.168.90.1
 
 volumes:
   teaspeak_certs_1:
