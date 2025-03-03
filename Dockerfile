@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ubuntu:latest
+FROM --platform=linux/amd64 debian:stable-slim
 
 ARG TARGETPLATFORM
 ARG uid=4242
@@ -95,8 +95,13 @@ RUN echo "teaspeak ALL=(ALL) NOPASSWD: /usr/sbin/service cron start" >> /etc/sud
 RUN echo '#!/bin/bash' > /teaspeak/scripts/entrypoint.sh && \
     echo 'sudo service cron start || true' >> /teaspeak/scripts/entrypoint.sh && \
     echo 'sudo crontab -u teaspeak /etc/cron.d/teaspeak-backup || true' >> /teaspeak/scripts/entrypoint.sh && \
+    echo '/teaspeak/scripts/generate-cert.sh' >> /teaspeak/scripts/entrypoint.sh && \
     echo 'exec ./TeaSpeakServer "$@"' >> /teaspeak/scripts/entrypoint.sh && \
     chmod +x /teaspeak/scripts/entrypoint.sh
+
+# Add certificate generation script
+COPY scripts/generate-cert.sh /teaspeak/scripts/
+RUN chmod +x /teaspeak/scripts/generate-cert.sh
 
 EXPOSE 9987/tcp  
 EXPOSE 9987/udp  
