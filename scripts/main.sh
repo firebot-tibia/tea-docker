@@ -15,7 +15,6 @@ show_usage() {
     echo "  export [container-name] [local-path]        - Export backup from container"
     echo "  backup [container-name]                     - Create backup inside container"
     echo "  list-backups [container-name]              - List all backups in container"
-    echo "  configure-ticks [container-name]           - Configure ticking settings"
     echo "  status [container-name]                    - Show container status"
     echo "  logs [container-name]                      - Show container logs"
     echo "  cron-config [container-name]               - Configure automated backups"
@@ -54,21 +53,6 @@ create_backup() {
 list_backups() {
     echo -e "${GREEN}Listing backups in container $1...${NC}"
     docker exec "$1" ls -lah /teaspeak/database/backups
-}
-
-configure_ticks() {
-    echo -e "${GREEN}Configuring ticking settings for $1...${NC}"
-    docker exec "$1" mkdir -p /teaspeak/config
-    
-    docker exec "$1" bash -c 'cat > /teaspeak/config/config.yml << EOL
-client:
-  tick:
-    warning_threshold: 5000
-    interval: 100
-EOL'
-    
-    echo -e "${GREEN}Ticking configuration updated. Restarting container...${NC}"
-    docker restart "$1"
 }
 
 show_status() {
@@ -127,15 +111,6 @@ case "$1" in
         fi
         check_container "$2"
         list_backups "$2"
-        ;;
-    "configure-ticks")
-        if [ -z "$2" ]; then
-            echo -e "${RED}Error: Container name required${NC}"
-            show_usage
-            exit 1
-        fi
-        check_container "$2"
-        configure_ticks "$2"
         ;;
     "status")
         if [ -z "$2" ]; then

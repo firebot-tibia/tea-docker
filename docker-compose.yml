@@ -1,7 +1,13 @@
 services:
   teaspeak-server-1:
-    build: 
+    platform: linux/amd64
+    build:
       context: .
+      dockerfile: Dockerfile
+    user: root
+    cap_add:
+      - SYS_RESOURCE
+      - SYS_NICE
     environment:
       - TZ=America/Sao_Paulo
     ports:
@@ -32,12 +38,25 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    init: true
 
   teaspeak-server-2:
-    build: 
+    platform: linux/amd64
+    build:
       context: .
+      dockerfile: Dockerfile
+    user: root
+    cap_add:
+      - SYS_RESOURCE
+      - SYS_NICE
     environment:
       - TZ=America/Sao_Paulo
     ports:
@@ -68,9 +87,15 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    init: true
 
 networks:
   teaspeak_network:

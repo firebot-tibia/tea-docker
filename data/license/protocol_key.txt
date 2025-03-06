@@ -1,0 +1,7 @@
+# Teaspeak Protocol Key
+# Expiration date: 30/05/2025
+version:0
+chain:AQCvbHFTQDY/terPeilrp/ECU9xCH5U3xC92lYTNaY/0KQAJFueAazbsgAAAACVUZWFtU3BlYWsgU3lzdGVtcyBHbWJIAADbHBfZF68QpZ970jUlkszDtBaOjxFYQE1uUQPSGjvTNQAVbJNpO3yFngAAACRUZWFtU3BlYWsgc3lzdGVtcyBHbWJIAAA4YaG1aD1XNdDg5YVq+RGyPmjj+PSMH4KkPqFTLfY53wIVdZqAF1bOAAYAAAAAV29ybGQA
+root_key_prv:YNnzTFgG12dQEXgpQ8LUyf9mIV8yfeD2vODjGZJcPlY=
+root_key_pbl:zQ3irtRjRVCafjz9j2iz3HVVsp3M7HPNGHUPmTgSQIo=
+root_prv_index:3
