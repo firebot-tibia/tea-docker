@@ -11,8 +11,8 @@ services:
     environment:
       - TZ=America/Sao_Paulo
     ports:
-      - "9987:9987/udp"
-      - "9987:9987/tcp"
+      - "9989:9987/udp"
+      - "9989:9987/tcp"
       - "10101:10101/tcp"
       - "30303:30303/tcp"
     volumes:
